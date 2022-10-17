@@ -2,10 +2,16 @@
 
 Rstore is a json based file store written in ruby.
 
+## Dependences
+```
+ruby ~> 3.1.0
+```
+
 ## Installation
 ```bash
 git clone https://github.com/ps-97/RuStore
 cd RuStore
+gem install bundler
 bundle install
 bundle exec ruby main.rb
 ```
