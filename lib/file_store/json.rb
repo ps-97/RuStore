@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'oj'
+require 'json'
 
 module FileStore
   class JSON
@@ -19,6 +20,12 @@ module FileStore
     def write(arr)
       json_string = Oj.dump(arr)
       File.write(location, json_string)
+    end
+
+    def pretty_print(obj)
+      filtered_obj = obj.reject(&:empty?)
+
+      ::JSON.pretty_generate(filtered_obj)
     end
 
     private
