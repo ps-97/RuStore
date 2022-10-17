@@ -1,42 +1,53 @@
 # frozen_string_literal: true
 
 class StoreManager
+  SUB_COMMANDS_MAP = {
+    find: %i[select]
+  }.freeze
+
+  attr_reader :records
+
   def initialize(storage)
     @storage = storage
+    @records = storage.read
   end
 
-  def add!(record_hash)
-    return if records.find { |obj| obj == record_hash }
+  def add(record_hash)
+    return if records.find { |record| record == record_hash }
 
-    temp_state = records + [record_hash]
-    write_to_store(temp_state)
+    records << record_hash
+    write_to_store!
   end
 
-  def destroy!(key:, value:)
-    temp_state = records.reject { |obj| obj[key] == value }
-    write_to_store(temp_state)
+  def destroy(opts)
+    opts.each_pair do |key, value|
+      records.reject! { |record| record[key] == value }
+    end
+    write_to_store!
   end
 
-  def filter_by_value(value, keys_to_select: nil)
-    filtered_arr = records.select { |obj| obj.value?(value) }
-    return filtered_arr unless keys_to_select
+  def find(value)
+    records.select! { |record| record.value?(value) }
+  end
 
-    slice_keys(filtered_arr, keys_to_select)
+  def select(keys)
+    records.map! { |record| record.slice(*keys) }
+  end
+
+  def to_s
+    storage.pretty_print(records)
   end
 
   private
 
   attr_reader :storage
 
-  def slice_keys(arr, keys_to_select = nil)
-    arr.map { |hash| hash.slice(*keys_to_select) }
+  def write_to_store!
+    storage.write(records)
+    reload
   end
 
-  def records
-    storage.read
-  end
-
-  def write_to_store(temp_state)
-    storage.write(temp_state)
+  def reload
+    @records = storage.read
   end
 end
