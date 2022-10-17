@@ -5,7 +5,7 @@ require 'json'
 
 module FileStore
   class JSON
-    DEFAULT_LOACTION = './storage.json'
+    DEFAULT_LOACTION = '.storage/store.json'
 
     def initialize(location = DEFAULT_LOACTION)
       @location = location

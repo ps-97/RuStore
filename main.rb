@@ -36,6 +36,8 @@ class Main
 
   def storage
     FileStore::JSON.new(opts[:storage_location])
+  rescue Errno::ENOENT
+    Optimist.die "Cannot create file #{opts[:storage_location]} No such directory"
   end
 
   def store_manager
